@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              'assets/images/healthtrack_logo.png',
+              'assets/images/health_logo.png',
               width: 160,
               fit: BoxFit.contain,
             ),
