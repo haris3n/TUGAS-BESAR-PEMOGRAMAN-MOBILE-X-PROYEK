@@ -4,34 +4,47 @@ import 'package:provider/provider.dart';
 import '../../providers/activity_provider.dart';
 import '../../providers/theme_provider.dart';
 
+import '../notification/notification_screen.dart';
+import '../profile/profile_screen.dart';
+
 import '../activity/add_water_screen.dart';
 import '../activity/add_steps_screen.dart';
 import '../activity/add_workout_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<ThemeProvider>();
     final activity = context.watch<ActivityProvider>();
+    final isDark = theme.isDark;
 
-    final bool isDark = theme.isDark;
-
-    final Color bgColor = isDark ? const Color(0xFF0F2A44) : Colors.white;
-    final Color cardColor =
-        isDark ? const Color(0xFF102E4A) : Colors.white;
-    final Color textColor = isDark ? Colors.white : Colors.black;
+    final bgColor = isDark ? const Color(0xFF0F2A44) : Colors.white;
+    final cardColor = isDark ? const Color(0xFF102E4A) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
       backgroundColor: bgColor,
 
       // ================= BOTTOM NAV =================
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: _currentIndex,
         backgroundColor: cardColor,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -49,193 +62,144 @@ class HomeScreen extends StatelessWidget {
       ),
 
       // ================= BODY =================
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ================= HEADER =================
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF183B5B)
-                    : Colors.blue.shade100,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'HealthTrack',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'Hello, Chizbu!',
-                        style: TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.white),
-                    onPressed: () {
-                      theme.toggleTheme(); // sementara
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ================= PILIH AKTIVITAS =================
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Pilih Aktivitas',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _ActivityMenu(
-                    label: 'MINUM AIR',
-                    icon: Icons.local_drink,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AddWaterScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _ActivityMenu(
-                    label: 'LANGKAH KAKI',
-                    icon: Icons.directions_run,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AddStepsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _ActivityMenu(
-                    label: 'WORKOUT',
-                    icon: Icons.fitness_center,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AddWorkoutScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // ================= AKTIVITAS HARI INI =================
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Aktivitas hari ini',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: activity.hasActivity
-                    ? ListView(
-                        children: [
-                          _ActivityProgressCard(
-                            title: 'Minum air',
-                            subtitle: '${activity.water}/2000 ml',
-                            percent:
-                                (activity.water / 2000 * 100).clamp(0, 100).toInt(),
-                          ),
-                          _ActivityProgressCard(
-                            title: 'Langkah kaki',
-                            subtitle: '${activity.steps}/5000',
-                            percent:
-                                (activity.steps / 5000 * 100).clamp(0, 100).toInt(),
-                          ),
-                          _ActivityProgressCard(
-                            title: 'Olahraga',
-                            subtitle: '${activity.workout}/30 menit',
-                            percent:
-                                (activity.workout / 30 * 100).clamp(0, 100).toInt(),
-                          ),
-                        ],
-                      )
-                    : Center(
-                        child: Text(
-                          'Tidak ada aktivitas',
-                          style: TextStyle(
-                            color: textColor.withOpacity(0.6),
-                          ),
-                        ),
-                      ),
-              ),
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          _HomeContent(
+            isDark: isDark,
+            textColor: textColor,
+            activity: activity,
+          ),
+          const ProfileScreen(),
+          const NotificationScreen(),
+        ],
       ),
     );
   }
 }
+class _HomeContent extends StatelessWidget {
+  final bool isDark;
+  final Color textColor;
+  final ActivityProvider activity;
 
-// ================= WIDGET MENU =================
-class _ActivityMenu extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _ActivityMenu({
-    required this.label,
-    required this.icon,
-    required this.onTap,
+  const _HomeContent({
+    required this.isDark,
+    required this.textColor,
+    required this.activity,
   });
 
   @override
   Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ================= HEADER =================
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF183B5B)
+                  : Colors.blue.shade100,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'HealthTrack',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'Hello!',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/setting');
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // ================= PILIH AKTIVITAS =================
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'Pilih Aktivitas',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _menu(context, 'MINUM AIR', Icons.local_drink,
+                    const AddWaterScreen()),
+                _menu(context, 'LANGKAH', Icons.directions_run,
+                    const AddStepsScreen()),
+                _menu(context, 'WORKOUT', Icons.fitness_center,
+                    const AddWorkoutScreen()),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Expanded(
+            child: activity.hasActivity
+                ? ListView()
+                : Center(
+                    child: Text(
+                      'Tidak ada aktivitas',
+                      style:
+                          TextStyle(color: textColor.withOpacity(0.6)),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _menu(
+    BuildContext context,
+    String label,
+    IconData icon,
+    Widget page,
+  ) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => page),
+        );
+      },
       child: Column(
         children: [
           Container(
@@ -248,61 +212,7 @@ class _ActivityMenu extends StatelessWidget {
             child: Icon(icon, color: Colors.white, size: 36),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= PROGRESS CARD =================
-class _ActivityProgressCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int percent;
-
-  const _ActivityProgressCard({
-    required this.title,
-    required this.subtitle,
-    required this.percent,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blueGrey),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          Text(subtitle),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: percent / 100,
-            minHeight: 6,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              '$percent%',
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          Text(label, style: const TextStyle(fontSize: 12)),
         ],
       ),
     );
