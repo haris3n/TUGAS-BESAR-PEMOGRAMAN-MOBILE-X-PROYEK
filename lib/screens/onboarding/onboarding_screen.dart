@@ -18,25 +18,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_OnboardData> _pages = [
     _OnboardData(
-      image: 'assets/images/onboard_logo.png',
+      image: 'assets/images/onboard1.png',
       text:
           'Aplikasi HealthTrack membantumu mencatat aktivitas penting seperti minum air, jumlah langkah, dan olahraga dengan cara yang sederhana.',
       buttonText: 'Berikutnya',
     ),
     _OnboardData(
-      image: 'assets/images/onboard_features.png',
+      image: 'assets/images/onboard2.png',
       text:
           'Cukup sekali klik untuk menambahkan aktivitas. Semua data akan tersimpan rapi dan bisa kamu lihat kapan saja.',
       buttonText: 'Berikutnya',
     ),
     _OnboardData(
-      image: 'assets/images/onboard_graph.png',
+      image: 'assets/images/onboard3.png',
       text:
           'Lihat grafik dan perkembangan aktivitasmu. Capai target minum air, langkah, atau workout setiap harinya.',
       buttonText: 'Berikutnya',
     ),
     _OnboardData(
-      image: 'assets/images/onboard_logo.png',
+      image: 'assets/images/onboard4.png',
       text: 'Tingkatkan kebiasaan sehatmu bersama HealthTrack!',
       buttonText: 'Mulai Sekarang',
     ),
