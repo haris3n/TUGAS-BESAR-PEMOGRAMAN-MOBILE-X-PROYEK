@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:healthtrack/providers/activity_provider.dart';
 import 'package:healthtrack/providers/theme_provider.dart';
 
-import 'package:healthtrack/widgets/progress/water_progress_widget.dart';
-import 'package:healthtrack/widgets/progress/steps_progress_widget.dart';
-import 'package:healthtrack/widgets/progress/workout_progress_widget.dart';
+import 'package:healthtrack/screens/widgets/progress/water_progress_widget.dart';
+import 'package:healthtrack/screens/widgets/progress/steps_progress_widget.dart';
+import 'package:healthtrack/screens/widgets/progress/workout_progress_widget.dart';
 
 enum ActivityType { water, steps, workout }
 
