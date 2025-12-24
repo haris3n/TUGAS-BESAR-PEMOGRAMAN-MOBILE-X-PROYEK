@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../home/home_screen.dart';
 import 'login_screen.dart';
-import 'package:healthtrack/widgets/auth_textfield.dart';
+import 'package:healthtrack/screens/widgets/auth_textfield.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -39,31 +39,25 @@ class RegisterScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-
               const SizedBox(height: 16),
-
               AuthTextField(
                 hint: 'Nama',
                 controller: nameController,
               ),
-
               AuthTextField(
                 hint: 'Email/No.Telpon',
                 controller: emailController,
               ),
-
               AuthTextField(
                 hint: 'Password',
                 controller: passwordController,
                 obscure: true,
               ),
-
               AuthTextField(
                 hint: 'Konfirmasi Password',
                 controller: confirmController,
                 obscure: true,
               ),
-
               if (auth.error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
@@ -72,9 +66,7 @@ class RegisterScreen extends StatelessWidget {
                     style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
-
               const SizedBox(height: 16),
-
               ElevatedButton(
                 onPressed: auth.isLoading
                     ? null
@@ -110,9 +102,7 @@ class RegisterScreen extends StatelessWidget {
                     ? const CircularProgressIndicator()
                     : const Text('Daftar'),
               ),
-
               const SizedBox(height: 12),
-
               GestureDetector(
                 onTap: () {
                   Navigator.pushReplacement(

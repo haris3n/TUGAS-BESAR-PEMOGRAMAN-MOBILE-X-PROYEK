@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../home/home_screen.dart';
 import 'register_screen.dart';
-import 'package:healthtrack/widgets/auth_textfield.dart';
+import 'package:healthtrack/screens/widgets/auth_textfield.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
