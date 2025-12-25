@@ -14,6 +14,7 @@ Aplikasi pelacak aktivitas kesehatan harian berbasis Flutter yang terintegrasi d
 - **State Management:** Provider
 - **Networking:** Dio
 - **Local Storage:** SharedPreferences
+- **Database : MySQL**
 - **Backend:** Laravel (API)
 
 ## 🚀 Cara Menjalankan (Run)
