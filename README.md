@@ -50,10 +50,10 @@ class ApiUrl {
 ```
 
 ### 4. Cara Menjalankan Aplikasi
-       ```bash
+    ```bash
        flutter pub get
        flutter run
-      ```
+    ```
 ---
 
 ## 📦 Cara Build APK (Release)
