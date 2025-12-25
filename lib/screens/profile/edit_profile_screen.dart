@@ -29,9 +29,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = context.read<UserProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bgColor = isDark ? Colors.black : Colors.white;
+    final bgColor = isDark ? const Color(0xFF0B121C): Colors.white;
     final headerColor =
-        isDark ? const Color(0xFF1B2B42) : const Color(0xFF1B2B42);
+        isDark ? const Color(0xFF183B5B) : const Color(0xFF183B5B);
     final textColor = isDark ? Colors.white : Colors.black87;
 
     return Scaffold(

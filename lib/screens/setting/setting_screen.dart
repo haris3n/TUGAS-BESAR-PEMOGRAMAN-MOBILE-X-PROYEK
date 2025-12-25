@@ -29,7 +29,7 @@ class SettingScreen extends StatelessWidget {
             height: 165,
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: Color(0xFF1B2B42),
+              color: const Color(0xFF183B5B),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),

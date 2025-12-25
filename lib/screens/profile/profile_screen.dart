@@ -13,8 +13,8 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<UserProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bgColor = isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
-    final headerColor = const Color(0xFF1B2B42);
+    final bgColor = isDark ? const Color(0xFF0B121C): Colors.white;
+    final headerColor = const Color(0xFF183B5B);
     final textColor = Colors.white;
 
     return Scaffold(
@@ -23,57 +23,46 @@ class ProfileScreen extends StatelessWidget {
         children: [
           // ================= HEADER =================
           Container(
-            height: 165,
             width: double.infinity,
+            padding: const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 40),
             decoration: const BoxDecoration(
-              color: Color(0xFF1B2B42),
+              color:const Color(0xFF183B5B),
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
+                bottomRight: Radius.circular(80),
               ),
             ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 30),
+                Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          color: Colors.white),
-                      onPressed: () {
-                        // FIX BACK BUTTON (WEB SAFE)
-                        if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 16),
                     const Text(
                       'Profil',
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 22.5,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.settings,
-                          color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SettingScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                        icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SettingScreen()),
+                          );
+                        },
+                      ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
+          const SizedBox(height: 25),
 
           // ================= AVATAR =================
           Transform.translate(
