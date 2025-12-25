@@ -24,60 +24,71 @@ class _AddWaterScreenState extends State<AddWaterScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _header(context, isDark),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _periodSelector(isDark),
-                  const SizedBox(height: 24),
-
-                  Text(
-                    'Gelas',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+        // ScrollView ditambahkan agar keyboard tidak menutupi tombol Simpan
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              _header(context, isDark),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _periodSelector(isDark),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Gelas',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: glassController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Minimal 8',
-                      suffixText: 'gelas',
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: glassController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: 'Minimal 8',
+                        suffixText: 'gelas',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // LOGIC DATABASE: Pastikan input angka valid
+                          final target = int.tryParse(glassController.text) ?? 0;
 
-                  const SizedBox(height: 32),
+                          if (target == 0) {
+                             // Opsional: Beri peringatan jika kosong
+                          }
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        activity.addWaterActivity(
-                          target: int.parse(glassController.text),
-                          period: selectedPeriod,
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Simpan'),
-                    ),
-                  )
-                ],
+                          // Simpan ke Provider (Database)
+                          await activity.addWaterActivity(
+                            target: target,
+                            period: selectedPeriod,
+                          );
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Simpan'),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // ================= HEADER =================
+  // ================= HEADER & SELECTOR (TIDAK BERUBAH) =================
   Widget _header(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -103,10 +114,8 @@ class _AddWaterScreenState extends State<AddWaterScreen> {
     );
   }
 
-  // ================= PERIOD =================
   Widget _periodSelector(bool isDark) {
     final labels = ['24 jam', '7 hari', '30 hari'];
-
     return Row(
       children: List.generate(3, (i) {
         final selected = selectedPeriod == i;

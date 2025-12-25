@@ -1,34 +1,68 @@
+import 'dart:async'; // WAJIB
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:healthtrack/providers/theme_provider.dart';
+import 'package:healthtrack/providers/activity_provider.dart'; // Import provider
 
-class StepsProgressWidget extends StatelessWidget {
+class StepsProgressWidget extends StatefulWidget {
   final int current;
   final int target;
   final String time;
-  final String date; // Parameter Tanggal
-  final VoidCallback onStart;
+  final String date;
+  final VoidCallback onStart; // Kita ignore ini, pakai logic internal
 
   const StepsProgressWidget({
     super.key,
     required this.current,
     required this.target,
     required this.time,
-    required this.date, // Wajib
+    required this.date,
     required this.onStart,
   });
+
+  @override
+  State<StepsProgressWidget> createState() => _StepsProgressWidgetState();
+}
+
+class _StepsProgressWidgetState extends State<StepsProgressWidget> {
+  bool isSimulating = false;
+
+  void _startSimulation() {
+    // Kalau sudah full, jangan jalan
+    if (widget.current >= widget.target || isSimulating) return;
+
+    setState(() => isSimulating = true);
+
+    // Timer: Nambah 500 langkah setiap 0.5 detik
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final activity = context.read<ActivityProvider>();
+      
+      if (activity.steps >= widget.target) {
+        timer.cancel();
+        setState(() => isSimulating = false);
+      } else {
+        activity.addSteps(500); // Panggil fungsi di Provider
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDark;
     
+    // UI Code sama persis, cuma beda di tombol onPressed
     final topCardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.white60 : Colors.black54;
-    const statsCardColor = Color(0xFF18253A); 
+    const statsCardColor = Color(0xFF18253A);
     const btnColor = Color(0xFF2B3648);
 
-    final double percent = target == 0 ? 0 : (current / target).clamp(0.0, 1.0);
+    final double percent = widget.target == 0 ? 0 : (widget.current / widget.target).clamp(0.0, 1.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,22 +81,21 @@ class StepsProgressWidget extends StatelessWidget {
                 children: [
                   Text('24 jam', style: TextStyle(fontSize: 13, color: subTextColor)),
                   const SizedBox(height: 8),
-                  Text('$target', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
+                  Text('${widget.target}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
                   const SizedBox(height: 8),
-                  Text(time, style: TextStyle(fontSize: 13, color: subTextColor)),
+                  Text(widget.time, style: TextStyle(fontSize: 13, color: subTextColor)),
                   const SizedBox(height: 8),
-                  // TANGGAL DINAMIS
-                  Text('Dibuat  $date', style: TextStyle(fontSize: 12, color: subTextColor)),
+                  Text('Dibuat ${widget.date}', style: TextStyle(fontSize: 12, color: subTextColor)),
                 ],
               ),
               Positioned(right: 0, top: 0, child: Icon(Icons.edit_outlined, size: 20, color: subTextColor))
             ],
           ),
         ),
-        // ... (Bagian bawah sama persis, copy dari file sebelumnya atau biarkan jika sudah benar)
         const SizedBox(height: 24),
         Text('Statistik', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: textColor)),
         const SizedBox(height: 12),
+        // STATS CARD
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 40),
@@ -72,37 +105,39 @@ class StepsProgressWidget extends StatelessWidget {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  SizedBox(
-                    width: 140, height: 140,
-                    child: CircularProgressIndicator(value: percent, strokeWidth: 14, backgroundColor: const Color(0xFF2B3648), valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)), strokeCap: StrokeCap.round),
-                  ),
+                  SizedBox(width: 140, height: 140, child: CircularProgressIndicator(value: percent, strokeWidth: 14, backgroundColor: const Color(0xFF2B3648), valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)), strokeCap: StrokeCap.round)),
                   Column(
                     children: [
                       const Text('On Track', style: TextStyle(color: Color(0xFF8B5CF6), fontSize: 10, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
-                      Text('$target', style: const TextStyle(color: Colors.white, fontSize: 12)),
-                      Text('$current', style: const TextStyle(color: Color(0xFF8B5CF6), fontSize: 32, fontWeight: FontWeight.bold)),
+                      Text('${widget.target}', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                      Text('${widget.current}', style: const TextStyle(color: Color(0xFF8B5CF6), fontSize: 32, fontWeight: FontWeight.bold)),
                     ],
                   )
                 ],
               ),
               const SizedBox(height: 24),
-              Text('Hari ini kamu sudah mencapai $current/$target langkah.', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              Text('Hari ini kamu sudah mencapai ${widget.current}/${widget.target} langkah.', style: const TextStyle(color: Colors.white70, fontSize: 12)),
               const SizedBox(height: 20),
               SizedBox(
                 width: 120, height: 40,
-                child: ElevatedButton(onPressed: onStart, style: ElevatedButton.styleFrom(backgroundColor: btnColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0), child: const Text('Mulai', style: TextStyle(color: Colors.white))),
+                child: ElevatedButton(
+                  onPressed: isSimulating ? null : _startSimulation, // LOGIC BARU
+                  style: ElevatedButton.styleFrom(backgroundColor: btnColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0), 
+                  child: Text(isSimulating ? 'Jalan...' : 'Mulai', style: const TextStyle(color: Colors.white))
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        _buildChartCard(statsCardColor),
+        _buildChartCard(statsCardColor), // Bagian Chart Dummy (Biarkan yg lama)
         const SizedBox(height: 40),
       ],
     );
   }
-
+  
+  // Method _buildChartCard pakai yg lama saja (dummy UI)
   Widget _buildChartCard(Color color) {
     return Container(
       width: double.infinity,
@@ -112,24 +147,7 @@ class StepsProgressWidget extends StatelessWidget {
         children: [
           const Text('7 hari terakhir', style: TextStyle(color: Colors.white, fontSize: 12)),
           const SizedBox(height: 24),
-          SizedBox(
-            height: 100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(7, (index) {
-                double height = 10.0 + ((index * 12) % 90); 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(width: 20, height: height, decoration: BoxDecoration(border: Border.all(color: Colors.white24), borderRadius: BorderRadius.circular(2))),
-                    const SizedBox(height: 8),
-                    Container(width: 10, height: 2, color: Colors.white24)
-                  ],
-                );
-              }),
-            ),
-          ),
+          SizedBox(height: 100, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: List.generate(7, (index) => Column(mainAxisAlignment: MainAxisAlignment.end, children: [Container(width: 20, height: 10.0 + ((index * 12) % 90), decoration: BoxDecoration(border: Border.all(color: Colors.white24), borderRadius: BorderRadius.circular(2))), const SizedBox(height: 8), Container(width: 10, height: 2, color: Colors.white24)])))),
         ],
       ),
     );

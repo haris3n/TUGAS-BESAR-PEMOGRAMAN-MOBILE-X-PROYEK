@@ -25,94 +25,100 @@ class _AddStepsScreenState extends State<AddStepsScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _header(context, isDark),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _periodSelector(isDark),
-                  const SizedBox(height: 20),
-
-                  Text(
-                    'Jumlah Langkah',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: stepsController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Contoh: 5000',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    'Jam Pengingat',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  InkWell(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: reminderTime,
-                      );
-                      if (picked != null) {
-                        setState(() => reminderTime = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12),
+        // ScrollView ditambahkan agar aman saat keyboard muncul
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              _header(context, isDark),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _periodSelector(isDark),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Jumlah Langkah',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
                       ),
-                      child: Text(
-                        reminderTime.format(context),
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: stepsController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: 'Contoh: 5000',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Jam Pengingat',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: reminderTime,
+                        );
+                        if (picked != null) {
+                          setState(() => reminderTime = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          reminderTime.format(context),
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // LOGIC DATABASE: Konversi String ke Int dengan aman
+                          final target =
+                              int.tryParse(stepsController.text) ?? 0;
 
-                  const SizedBox(height: 30),
+                          // Simpan ke Provider (Database)
+                          await activity.addStepsActivity(
+                            target: target,
+                            period: selectedPeriod,
+                            reminder: reminderTime,
+                          );
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        activity.addStepsActivity(
-                          target: int.parse(stepsController.text),
-                          period: selectedPeriod,
-                          reminder: reminderTime,
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Simpan'),
-                    ),
-                  )
-                ],
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Simpan'),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // ================= HEADER & SELECTOR (TIDAK BERUBAH) =================
   Widget _header(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -132,7 +138,7 @@ class _AddStepsScreenState extends State<AddStepsScreen> {
           const Text(
             'Langkah kaki',
             style: TextStyle(color: Colors.white, fontSize: 18),
-          )
+          ),
         ],
       ),
     );
@@ -140,7 +146,6 @@ class _AddStepsScreenState extends State<AddStepsScreen> {
 
   Widget _periodSelector(bool isDark) {
     final labels = ['24 jam', '7 hari', '30 hari'];
-
     return Row(
       children: List.generate(3, (i) {
         final selected = selectedPeriod == i;

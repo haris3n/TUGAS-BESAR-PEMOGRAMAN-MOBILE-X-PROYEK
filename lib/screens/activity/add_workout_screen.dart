@@ -27,7 +27,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
       body: SafeArea(
-        // PENAMBAHAN: SingleChildScrollView agar bisa discroll saat keyboard muncul
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -40,7 +39,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                   children: [
                     _periodSelector(isDark),
                     const SizedBox(height: 20),
-
                     Text(
                       'Jenis Olahraga',
                       style: TextStyle(
@@ -48,7 +46,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-
                     TextField(
                       controller: typeController,
                       decoration: const InputDecoration(
@@ -56,9 +53,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     Text(
                       'Durasi (menit)',
                       style: TextStyle(
@@ -66,7 +61,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-
                     TextField(
                       controller: durationController,
                       keyboardType: TextInputType.number,
@@ -76,9 +70,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     Text(
                       'Jam Pengingat',
                       style: TextStyle(
@@ -86,7 +78,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-
                     InkWell(
                       onTap: () async {
                         final picked = await showTimePicker(
@@ -113,32 +104,36 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 30),
-
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Pastikan validasi sederhana agar tidak error saat parse int kosong
-                          if (durationController.text.isEmpty) {
-                            durationController.text = '0';
+                        onPressed: () async {
+                          // LOGIC DATABASE: Validasi input agar tidak crash saat parse
+                          if (typeController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Isi jenis olahraga')),
+                            );
+                            return;
                           }
 
-                          activity.addWorkoutActivity(
+                          // Simpan ke Provider (yang terhubung ke Database)
+                          await activity.addWorkoutActivity(
                             type: typeController.text,
                             duration:
                                 int.tryParse(durationController.text) ?? 0,
                             period: selectedPeriod,
                             reminder: reminderTime,
                           );
-                          Navigator.pop(context);
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
                         },
                         child: const Text('Simpan'),
                       ),
                     ),
-
-                    // Spacer tambahan di bawah agar tidak terlalu mepet keyboard
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -150,7 +145,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     );
   }
 
-  // ================= HEADER =================
+  // ================= HEADER & SELECTOR (TIDAK BERUBAH) =================
   Widget _header(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -176,10 +171,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     );
   }
 
-  // ================= PERIOD =================
   Widget _periodSelector(bool isDark) {
     final labels = ['24 jam', '7 hari', '30 hari'];
-
     return Row(
       children: List.generate(3, (i) {
         final selected = selectedPeriod == i;
