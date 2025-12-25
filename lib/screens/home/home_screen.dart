@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final activity = context.watch<ActivityProvider>();
     final isDark = theme.isDark;
 
-    final bgColor = isDark ? const Color(0xFF0F2A44) : Colors.white;
+    final bgColor = isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
     final cardColor = isDark ? const Color(0xFF102E4A) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
 

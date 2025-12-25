@@ -12,7 +12,7 @@ class SettingScreen extends StatelessWidget {
     final bool isDark = theme.isDark;
 
     final Color bgColor =
-        isDark ? const Color(0xFF0F2A44) : Colors.white;
+        isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
     final Color cardColor =
         isDark ? const Color(0xFF1C1C1C) : Colors.white;
     final Color textColor =

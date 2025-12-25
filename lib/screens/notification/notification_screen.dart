@@ -12,7 +12,7 @@ class NotificationScreen extends StatelessWidget {
     final bool isDark = theme.isDark;
 
     final Color bgColor =
-        isDark ? const Color(0xFF0F2A44) : Colors.white;
+        isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
     final Color headerColor =
         isDark ? const Color(0xFF183B5B) : const Color(0xFF183B5B);
     final Color textColor =

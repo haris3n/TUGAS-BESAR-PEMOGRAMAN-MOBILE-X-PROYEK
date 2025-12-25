@@ -13,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<UserProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bgColor = isDark ? const Color(0xFF0F2A44) : Colors.white;
+    final bgColor = isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
     final headerColor = const Color(0xFF1B2B42);
     final textColor = Colors.white;
 
