@@ -47,6 +47,8 @@ class ApiUrl {
   // Pastikan URL diakhiri dengan /api
   static const String baseUrl = '[https://abcd-123.ngrok-free.app/api](https://abcd-123.ngrok-free.app/api)'; 
 }
+```
+
 ### 4. Cara Menjalankan Aplikasi
        ```bash
        flutter pub get
@@ -76,11 +78,11 @@ Untuk menghasilkan file instalasi Android (.apk) versi rilis yang siap dikumpulk
 
 ## 👥 Contact Person (Tim Pengembang)
 Jika terdapat kendala dalam pengujian aplikasi, silakan hubungi:
-   Nama: M. Haris Tri Nugraha
-   NIM: 2405109
-   Jabatan: Ketua Tim / Lead Developer
-   Email: haris3n@gmail.com   
-   WhatsApp: 087755151505
-   Git Repository: @haris3n
+   - Nama: M. Haris Tri Nugraha
+   - NIM: 2405109
+   - Jabatan: Ketua Tim / Lead Developer
+   - Email: haris3n@gmail.com   
+   - WhatsApp: 087755151505
+   - Git Repository: @haris3n
 
 © 2025 HealthTrack Project - Tugas Besar Pemrograman Mobile.
