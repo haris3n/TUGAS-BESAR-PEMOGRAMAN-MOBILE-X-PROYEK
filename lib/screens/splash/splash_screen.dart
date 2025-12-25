@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   // TEXT
   String _typedText = '';
-  final String _fullText = 'HEALTHRACK';
+  final String _fullText = 'HEALTHTRACK';
 
   // BUTTON
   double _buttonScale = 0;
