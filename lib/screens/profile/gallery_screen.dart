@@ -18,7 +18,7 @@ class GalleryScreen extends StatelessWidget {
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: 8,
+        itemCount: 9,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           crossAxisSpacing: 8,
@@ -30,9 +30,7 @@ class GalleryScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const CameraScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const CameraScreen()),
                 );
               },
               child: const Card(
@@ -40,8 +38,7 @@ class GalleryScreen extends StatelessWidget {
               ),
             );
           }
-
-          return const Card();
+          return Container(color: Colors.grey.shade800);
         },
       ),
     );

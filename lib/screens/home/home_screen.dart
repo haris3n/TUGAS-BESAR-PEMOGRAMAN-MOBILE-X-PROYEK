@@ -6,6 +6,7 @@ import '../../providers/theme_provider.dart';
 
 import '../notification/notification_screen.dart';
 import '../profile/profile_screen.dart';
+import '../setting/setting_screen.dart';
 
 import '../activity/add_water_screen.dart';
 import '../activity/add_steps_screen.dart';

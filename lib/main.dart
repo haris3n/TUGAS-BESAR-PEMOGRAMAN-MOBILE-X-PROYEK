@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/activity_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/user_provider.dart';
 
 import 'screens/splash/splash_screen.dart';
 
@@ -32,6 +33,10 @@ class MyApp extends StatelessWidget {
         // THEME (dark / light dari setting)
         ChangeNotifierProvider(
           create: (_) => ThemeProvider()..loadTheme(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(
