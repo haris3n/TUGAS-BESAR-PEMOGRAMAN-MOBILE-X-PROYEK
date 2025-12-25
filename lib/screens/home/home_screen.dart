@@ -96,17 +96,17 @@ class _HomeContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ================= HEADER =================
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Color(0xFF1B2B42)
-                  : Color(0xFF1B2B42),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
+            Container(
+              height: 165,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Color(0xFF1B2B42),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
               ),
             ),
+            padding: const EdgeInsets.fromLTRB(30, 34, 30, 42),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
