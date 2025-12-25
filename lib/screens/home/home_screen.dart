@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// --- IMPORTS PROVIDER ---
 import '../../providers/activity_provider.dart';
 import '../../providers/theme_provider.dart';
 
+// --- IMPORTS SCREEN LAIN ---
 import '../notification/notification_screen.dart';
 import '../profile/profile_screen.dart';
 import '../setting/setting_screen.dart';
 
+// --- IMPORTS ACTIVITY FORM ---
 import '../activity/add_water_screen.dart';
 import '../activity/add_steps_screen.dart';
 import '../activity/add_workout_screen.dart';
@@ -24,203 +27,439 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Ambil State Tema
     final theme = context.watch<ThemeProvider>();
-    final activity = context.watch<ActivityProvider>();
     final isDark = theme.isDark;
 
-    final bgColor = isDark ? const Color.fromARGB(255, 0, 0, 0) : Colors.white;
-    final cardColor = isDark ? const Color(0xFF102E4A) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
+    // 2. Definisi Warna Dasar
+    final bgColor = isDark ? const Color(0xFF0B121C) : Colors.white;
+    final navColor = isDark ? const Color(0xFF102E4A) : Colors.white;
+    final unselectedItemColor = isDark ? Colors.grey[500] : Colors.grey;
 
     return Scaffold(
       backgroundColor: bgColor,
-
-      // ================= BOTTOM NAV =================
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        backgroundColor: cardColor,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Beranda',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifikasi',
-          ),
-        ],
-      ),
 
       // ================= BODY =================
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          _HomeContent(
-            isDark: isDark,
-            textColor: textColor,
-            activity: activity,
-          ),
-          const ProfileScreen(),
-          const NotificationScreen(),
+          _HomeContent(isDark: isDark), // Halaman Home (Index 0)
+          const ProfileScreen(),        // Halaman Profil (Index 1)
+          const NotificationScreen(),   // Halaman Notif (Index 2)
         ],
+      ),
+
+      // ================= BOTTOM NAV =================
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: navColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            backgroundColor: navColor,
+            selectedItemColor: Colors.blueAccent,
+            unselectedItemColor: unselectedItemColor,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            elevation: 0,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_filled),
+                label: 'Beranda',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profil',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications),
+                label: 'Notifikasi',
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
+
+// ================= WIDGET KONTEN HOME =================
 class _HomeContent extends StatelessWidget {
   final bool isDark;
-  final Color textColor;
-  final ActivityProvider activity;
 
-  const _HomeContent({
-    required this.isDark,
-    required this.textColor,
-    required this.activity,
-  });
+  const _HomeContent({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    // Mengambil data dari ActivityProvider
+    final activityProvider = context.watch<ActivityProvider>();
+    
+    // Warna Text dan Elemen
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.white70 : Colors.black54;
+    const headerColor = Color(0xFF102E4A);
+
+    // ================= LOGIC CEK DATA =================
+    final List<Map<String, dynamic>> dataList = [];
+
+    if (activityProvider.waterTarget > 0) {
+      dataList.add({
+        'title': 'Minum air',
+        'current': activityProvider.water,
+        'target': activityProvider.waterTarget,
+        'unit': 'gelas',
+      });
+    }
+    if (activityProvider.stepsTarget > 0) {
+      dataList.add({
+        'title': 'Langkah kaki',
+        'current': activityProvider.steps,
+        'target': activityProvider.stepsTarget,
+        'unit': '',
+      });
+    }
+    if (activityProvider.workoutTarget > 0) {
+      dataList.add({
+        'title': 'Olahraga',
+        'current': activityProvider.workout,
+        'target': activityProvider.workoutTarget,
+        'unit': 'menit',
+      });
+    }
+
+    // Cek apakah ada aktivitas yang dipilih
+    final bool hasActivity = dataList.isNotEmpty;
+    // ==========================================================
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(), 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= HEADER =================
-            Container(
-              height: 165,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFF1B2B42),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
+          
+          // ---------------- HEADER ----------------
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 40),
+            decoration: const BoxDecoration(
+              color: headerColor,
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(80),
               ),
             ),
-            padding: const EdgeInsets.fromLTRB(30, 34, 30, 42),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'HealthTrack',
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      'Hello!',
-                      style: TextStyle(color: Colors.white70),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SettingScreen()),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
-                    IconButton(
-                      icon: const Icon(Icons.settings,
-                          color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const SettingScreen(),
-                          ),
-                        );
-                      },
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Container(
+                      width: 55,
+                      height: 55,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: const Icon(Icons.person_outline, size: 35, color: headerColor),
                     ),
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Hello, User!', 
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Selamat datang kembali',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
 
-          // ================= PILIH AKTIVITAS =================
+          // ---------------- PILIH AKTIVITAS (MENU GAMBAR) ----------------
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               'Pilih Aktivitas',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: textColor,
               ),
             ),
           ),
+          const SizedBox(height: 16),
 
-          const SizedBox(height: 12),
-
+          // Menu Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _menu(context, 'MINUM AIR', Icons.local_drink,
-                    const AddWaterScreen()),
-                _menu(context, 'LANGKAH', Icons.directions_run,
-                    const AddStepsScreen()),
-                _menu(context, 'WORKOUT', Icons.fitness_center,
-                    const AddWorkoutScreen()),
+                _buildImageMenu(context, 'assets/images/water.png', const AddWaterScreen()),
+                _buildImageMenu(context, 'assets/images/run.png', const AddStepsScreen()),
+                _buildImageMenu(context, 'assets/images/gym.png', const AddWorkoutScreen()),
               ],
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 30),
 
-          Expanded(
-            child: activity.hasActivity
-                ? ListView()
-                : Center(
-                    child: Text(
-                      'Tidak ada aktivitas',
-                      style:
-                          TextStyle(color: textColor.withOpacity(0.6)),
+          // ---------------- SECTION: AKTIVITAS HARI INI ----------------
+          // Judul SELALU MUNCUL (Sesuai Request)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              'Aktivitas hari ini',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Logic Konten (Card vs Placeholder)
+          Builder(
+            builder: (context) {
+              if (hasActivity) {
+                // JIKA ADA DATA -> Tampilkan List Card
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: dataList.length,
+                  itemBuilder: (context, index) {
+                    final item = dataList[index];
+                    return _buildProgressCard(
+                      isDark: isDark,
+                      title: item['title'],
+                      current: item['current'],
+                      target: item['target'],
+                      unit: item['unit'],
+                    );
+                  },
+                );
+              } else {
+                // JIKA KOSONG -> Tampilkan Placeholder (Icon & Teks)
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 90, bottom: 20),
+                    child: Column(
+                      children: [
+                        Icon(Icons.history_toggle_off,
+                            size: 60, color: subTextColor.withOpacity(0.3)),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Tidak ada aktivitas',
+                          style: TextStyle(
+                            color: subTextColor.withOpacity(0.5),
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                );
+              }
+            },
+          ),
+          
+          const SizedBox(height: 50), 
+        ],
+      ),
+    );
+  }
+
+  // ================= WIDGET HELPER: CARD PROGRESS =================
+  Widget _buildProgressCard({
+    required bool isDark,
+    required String title,
+    required int current,
+    required int target,
+    required String unit,
+  }) {
+    double progressValue = (target == 0) ? 0 : (current / target);
+    if (progressValue > 1.0) progressValue = 1.0;
+    
+    final int percentage = (progressValue * 100).toInt();
+    final borderColor = isDark ? Colors.blueAccent.withOpacity(0.5) : Colors.blueAccent;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.transparent : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '$current/$target $unit',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '$percentage %',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progressValue,
+              minHeight: 12,
+              backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isDark ? Colors.grey[400]! : Colors.grey[600]!,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _menu(
-    BuildContext context,
-    String label,
-    IconData icon,
-    Widget page,
-  ) {
+  // Widget Helper Menu Gambar
+  Widget _buildImageMenu(BuildContext context, String assetPath, Widget targetScreen) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => page),
+          MaterialPageRoute(builder: (context) => targetScreen),
         );
       },
-      child: Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 100, 
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(icon, color: Colors.white, size: 36),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.asset(
+            assetPath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              );
+            },
           ),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontSize: 12)),
-        ],
+        ),
       ),
     );
   }

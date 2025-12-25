@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ActivityProvider extends ChangeNotifier {
-  // ================= CURRENT =================
-  int water = 0;    // gelas
-  int steps = 0;    // langkah
-  int workout = 0;  // menit
+  int water = 0;
+  int steps = 0;
+  int workout = 0;
 
   // ================= TARGET =================
-  int waterTarget = 8;
-  int stepsTarget = 5000;
-  int workoutTarget = 30;
+  int waterTarget = 0;
+  int stepsTarget = 0;
+  int workoutTarget = 0;
 
   // ================= ADD PROGRESS =================
   void addWater() {

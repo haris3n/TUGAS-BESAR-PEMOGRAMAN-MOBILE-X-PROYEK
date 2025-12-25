@@ -27,109 +27,124 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _header(context, isDark),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _periodSelector(isDark),
-                  const SizedBox(height: 20),
+        // PENAMBAHAN: SingleChildScrollView agar bisa discroll saat keyboard muncul
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              _header(context, isDark),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _periodSelector(isDark),
+                    const SizedBox(height: 20),
 
-                  Text(
-                    'Jenis Olahraga',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: typeController,
-                    decoration: const InputDecoration(
-                      hintText: 'Pilih olahraga',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    'Durasi (menit)',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: durationController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: '30',
-                      suffixText: 'menit',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    'Jam Pengingat',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  InkWell(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: reminderTime,
-                      );
-                      if (picked != null) {
-                        setState(() => reminderTime = picked);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12),
+                    Text(
+                      'Jenis Olahraga',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
                       ),
-                      child: Text(
-                        reminderTime.format(context),
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
+                    ),
+                    const SizedBox(height: 8),
+
+                    TextField(
+                      controller: typeController,
+                      decoration: const InputDecoration(
+                        hintText: 'Pilih olahraga',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Text(
+                      'Durasi (menit)',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    TextField(
+                      controller: durationController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: '30',
+                        suffixText: 'menit',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Text(
+                      'Jam Pengingat',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: reminderTime,
+                        );
+                        if (picked != null) {
+                          setState(() => reminderTime = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: isDark ? Colors.white70 : Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          reminderTime.format(context),
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        activity.addWorkoutActivity(
-                          type: typeController.text,
-                          duration: int.parse(durationController.text),
-                          period: selectedPeriod,
-                          reminder: reminderTime,
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Simpan'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Pastikan validasi sederhana agar tidak error saat parse int kosong
+                          if (durationController.text.isEmpty) {
+                            durationController.text = '0';
+                          }
+
+                          activity.addWorkoutActivity(
+                            type: typeController.text,
+                            duration:
+                                int.tryParse(durationController.text) ?? 0,
+                            period: selectedPeriod,
+                            reminder: reminderTime,
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Simpan'),
+                      ),
                     ),
-                  ),
-                ],
+
+                    // Spacer tambahan di bawah agar tidak terlalu mepet keyboard
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -184,7 +199,9 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                 child: Text(
                   labels[i],
                   style: TextStyle(
-                    color: selected ? Colors.white : Colors.black,
+                    color: selected
+                        ? Colors.white
+                        : (isDark ? Colors.white : Colors.black),
                   ),
                 ),
               ),
