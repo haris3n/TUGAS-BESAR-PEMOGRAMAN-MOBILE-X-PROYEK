@@ -100,8 +100,8 @@ class _HomeContent extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
             decoration: BoxDecoration(
               color: isDark
-                  ? const Color(0xFF183B5B)
-                  : Colors.blue.shade100,
+                  ? Color(0xFF1B2B42)
+                  : Color(0xFF1B2B42),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(32),
                 bottomRight: Radius.circular(32),
@@ -128,12 +128,18 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.settings, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/setting');
-                  },
-                ),
+                    IconButton(
+                      icon: const Icon(Icons.settings,
+                          color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SettingScreen(),
+                          ),
+                        );
+                      },
+                    ),
               ],
             ),
           ),
