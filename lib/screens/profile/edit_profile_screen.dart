@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back, color: textColor),
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),

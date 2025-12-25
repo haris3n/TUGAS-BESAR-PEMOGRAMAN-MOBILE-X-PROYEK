@@ -25,15 +25,14 @@ class SettingScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ================= HEADER =================
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF183B5B)
-                    : Colors.blue.shade100,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
+          Container(
+            height: 165,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color(0xFF1B2B42),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
                 ),
               ),
               child: Row(
