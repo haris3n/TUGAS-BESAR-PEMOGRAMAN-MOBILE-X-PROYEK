@@ -26,17 +26,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = context.read<UserProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = isDark ? Colors.black : Colors.white;
     final headerColor =
-        isDark ? const Color(0xFF1B2B42) : const Color(0xFFEFF3F6);
+        isDark ? const Color(0xFF1B2B42) : const Color(0xFF1B2B42);
     final textColor = isDark ? Colors.white : Colors.black87;
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: Stack(
+      body: Column(
         children: [
           /// ================= HEADER =================
           Container(
@@ -49,100 +49,94 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 bottomRight: Radius.circular(32),
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SafeArea(
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: textColor),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Ubah Profil',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          /// ================= CONTENT =================
-          Positioned.fill(
-            top: 120,
-            child: Column(
-              children: [
-                /// ================= AVATAR =================
-                Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundColor: isDark
-                          ? Colors.grey.shade800
-                          : Colors.grey.shade300,
-                      child: const Icon(Icons.person, size: 60),
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: textColor),
+                      onPressed: () => Navigator.pop(context),
                     ),
-
-                    /// ===== IKON PLUS (INI YANG FIX) =====
-                    Positioned(
-                      bottom: 0,
-                      right: -4,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const GalleryScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF1B2B42),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Ubah Profil',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+          ),
 
-                const SizedBox(height: 32),
-
-                /// ================= FORM =================
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    children: [
-                      _inputField('Nama', nameC, textColor),
-                      const SizedBox(height: 12),
-                      _inputField('Email', emailC, textColor),
-                      const SizedBox(height: 12),
-                      _inputField('No. telpon', phoneC, textColor),
-                    ],
-                  ),
+          /// ================= AVATAR =================
+          Transform.translate(
+            offset: const Offset(0, -50),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundColor:
+                      isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                  child: const Icon(Icons.person, size: 60),
                 ),
 
-                const Spacer(),
+                /// PLUS ICON (PASTI BISA DIKLIK)
+                Positioned(
+                  bottom: 0,
+                  right: -4,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const GalleryScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF1B2B42),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-                /// ================= SIMPAN =================
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: SizedBox(
+          const SizedBox(height: 16),
+
+          /// ================= FORM =================
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  _inputField('Nama', nameC, textColor),
+                  const SizedBox(height: 12),
+                  _inputField('Email', emailC, textColor),
+                  const SizedBox(height: 12),
+                  _inputField('No. telpon', phoneC, textColor),
+                  const SizedBox(height: 40),
+
+                  /// BUTTON
+                  SizedBox(
                     width: 140,
                     height: 44,
                     child: ElevatedButton(
@@ -166,8 +160,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 132),
+                ],
+              ),
             ),
           ),
         ],
@@ -183,10 +178,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(color: textColor.withOpacity(0.7)),
-        ),
+        Text(label, style: TextStyle(color: textColor.withOpacity(0.7))),
         TextField(
           controller: controller,
           style: TextStyle(color: textColor),
