@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:healthtrack/providers/activity_provider.dart';
 import 'package:healthtrack/providers/theme_provider.dart';
-
 import 'package:healthtrack/screens/widgets/progress/water_progress_widget.dart';
 import 'package:healthtrack/screens/widgets/progress/steps_progress_widget.dart';
 import 'package:healthtrack/screens/widgets/progress/workout_progress_widget.dart';
@@ -27,32 +26,41 @@ class DetailActivityScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
+      appBar: AppBar(
+        backgroundColor: isDark ? const Color(0xFF0F2A44) : Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,
+              color: isDark ? Colors.white : Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Detail Aktivitas',
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            Text(
-              'Detail Aktivitas',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 32),
-            _buildProgress(activity),
-          ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: _buildProgress(context, activity),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProgress(ActivityProvider activity) {
+  Widget _buildProgress(BuildContext context, ActivityProvider activity) {
     switch (args.type) {
       case ActivityType.water:
         return WaterProgressWidget(
           current: activity.water,
           target: activity.waterTarget,
+          date: activity.waterDate, // KIRIM TANGGAL
           onStart: activity.addWater,
         );
 
@@ -60,6 +68,8 @@ class DetailActivityScreen extends StatelessWidget {
         return StepsProgressWidget(
           current: activity.steps,
           target: activity.stepsTarget,
+          time: activity.stepsTime,
+          date: activity.stepsDate, // KIRIM TANGGAL
           onStart: () => activity.addSteps(500),
         );
 
@@ -67,6 +77,9 @@ class DetailActivityScreen extends StatelessWidget {
         return WorkoutProgressWidget(
           current: activity.workout,
           target: activity.workoutTarget,
+          type: activity.workoutType,
+          time: activity.workoutTime,
+          date: activity.workoutDate, // KIRIM TANGGAL
           onStart: () => activity.addWorkout(5),
         );
     }

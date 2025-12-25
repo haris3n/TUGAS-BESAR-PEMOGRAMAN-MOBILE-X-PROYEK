@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ActivityProvider extends ChangeNotifier {
+  // ================= CURRENT =================
   int water = 0;
   int steps = 0;
   int workout = 0;
@@ -9,6 +10,18 @@ class ActivityProvider extends ChangeNotifier {
   int waterTarget = 0;
   int stepsTarget = 0;
   int workoutTarget = 0;
+
+  // ================= INFO TAMBAHAN (DINAMIS) =================
+  String workoutType = 'Aktivitas'; 
+  
+  // JAM PENGINGAT
+  String stepsTime = '-- : --';
+  String workoutTime = '-- : --';
+
+  // TANGGAL PEMBUATAN (Dibuat tanggal berapa?)
+  String waterDate = '-';
+  String stepsDate = '-';
+  String workoutDate = '-';
 
   // ================= ADD PROGRESS =================
   void addWater() {
@@ -30,13 +43,15 @@ class ActivityProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ================= CREATE ACTIVITY (DARI ADD SCREEN) =================
+  // ================= CREATE ACTIVITY =================
   void addWaterActivity({
     required int target,
-    required int period, // disimpan biar future-proof
+    required int period,
   }) {
     waterTarget = target;
     water = 0;
+    // SIMPAN TANGGAL HARI INI
+    waterDate = _getTodayDate(); 
     notifyListeners();
   }
 
@@ -47,6 +62,9 @@ class ActivityProvider extends ChangeNotifier {
   }) {
     stepsTarget = target;
     steps = 0;
+    // SIMPAN JAM & TANGGAL
+    stepsTime = _formatTime(reminder); 
+    stepsDate = _getTodayDate();
     notifyListeners();
   }
 
@@ -56,9 +74,32 @@ class ActivityProvider extends ChangeNotifier {
     required int period,
     required TimeOfDay reminder,
   }) {
+    workoutType = type;
     workoutTarget = duration;
     workout = 0;
+    // SIMPAN JAM & TANGGAL
+    workoutTime = _formatTime(reminder);
+    workoutDate = _getTodayDate();
     notifyListeners();
+  }
+
+  // ================= HELPER FORMATTER =================
+  
+  // Format Jam: "16 : 30"
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour : $minute';
+  }
+
+  // Format Tanggal Indo: "25 Desember 2025"
+  String _getTodayDate() {
+    final now = DateTime.now();
+    final months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    return '${now.day} ${months[now.month - 1]} ${now.year}';
   }
 
   // ================= CHECK =================
