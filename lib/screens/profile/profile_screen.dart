@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/user_provider.dart';
+// --- IMPORT PROVIDER ---
+import '../../providers/auth_provider.dart';
+import '../../providers/activity_provider.dart'; // <--- WAJIB TAMBAH INI BIAR BISA RESET DATA
+
+// --- IMPORT SCREENS ---
 import '../setting/setting_screen.dart';
 import 'edit_profile_screen.dart';
+import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Ambil AuthProvider untuk Nama & Fungsi Logout
+    final authProvider = context.watch<AuthProvider>();
+    final userName = authProvider.userName;
 
-    final bgColor = isDark ? const Color(0xFF0B121C): Colors.white;
-    final headerColor = const Color(0xFF183B5B);
-    final textColor = Colors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF0B121C) : Colors.white;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -24,9 +29,10 @@ class ProfileScreen extends StatelessWidget {
           // ================= HEADER =================
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 40),
+            padding:
+                const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 40),
             decoration: const BoxDecoration(
-              color:const Color(0xFF183B5B),
+              color: Color(0xFF183B5B),
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(80),
               ),
@@ -49,14 +55,16 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     IconButton(
-                        icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SettingScreen()),
-                          );
-                        },
-                      ),
+                      icon: const Icon(Icons.settings_outlined,
+                          color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SettingScreen()),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
@@ -73,11 +81,9 @@ class ProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.grey.shade700,
-                  child: const Icon(Icons.person,
-                      size: 60, color: Colors.white),
+                  child:
+                      const Icon(Icons.person, size: 60, color: Colors.white),
                 ),
-
-                // ICON EDIT (PASTI BISA DIKLIK)
                 Material(
                   shape: const CircleBorder(),
                   color: const Color(0xFF1B2B42),
@@ -87,15 +93,13 @@ class ProfileScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              const EditProfileScreen(),
+                          builder: (_) => const EditProfileScreen(),
                         ),
                       );
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8),
-                      child: Icon(Icons.edit,
-                          size: 16, color: Colors.white),
+                      child: Icon(Icons.edit, size: 16, color: Colors.white),
                     ),
                   ),
                 ),
@@ -107,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
 
           // ================= USER INFO =================
           Text(
-            user.name,
+            userName,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -116,30 +120,36 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            user.email,
+            'Pengguna HealthTrack',
             style: TextStyle(
-                color: (isDark ? Colors.white : Colors.black)
-                    .withOpacity(0.7)),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            user.phone,
-            style: TextStyle(
-                color: (isDark ? Colors.white : Colors.black)
-                    .withOpacity(0.7)),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.7)),
           ),
 
           const Spacer(),
 
-          // ================= LOGOUT =================
+          // ================= LOGOUT (PEMBERSIHAN DATA) =================
           Padding(
             padding: const EdgeInsets.only(bottom: 32),
             child: TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                // 1. BERSIHKAN DATA AKTIVITAS (RESET JADI 0)
+                // Ini kuncinya supaya data Ucup tidak terbawa ke Hahrus
+                context.read<ActivityProvider>().resetData();
+
+                // 2. Logout (Hapus Token & Nama)
+                await context.read<AuthProvider>().logout();
+
+                // 3. Pindah ke Halaman Login & Hapus History
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
               },
-              icon:
-                  const Icon(Icons.logout, color: Colors.red),
+              icon: const Icon(Icons.logout, color: Colors.red),
               label: const Text(
                 'Keluar',
                 style: TextStyle(color: Colors.red),
