@@ -51,7 +51,6 @@ class ApiUrl {
 
 ### 4. Cara Menjalankan Aplikasi
     ```bash
-    flutter pub get
     flutter run
     ```
 ---
