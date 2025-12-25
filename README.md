@@ -1,16 +1,24 @@
-# healthtrack
+# HealthTrack App
 
-A new Flutter project.
+Aplikasi pelacak aktivitas kesehatan harian berbasis Flutter yang terintegrasi dengan backend Laravel.
 
-## Getting Started
+## 📱 Fitur Utama
+- **Otentikasi:** Register & Login pengguna.
+- **Set Target:** Pengguna bisa mengatur target air minum, langkah, dan olahraga.
+- **Log Aktivitas:** Mencatat aktivitas harian dan melihat progres secara real-time.
+- **Data Persistence:** Login tetap tersimpan meskipun aplikasi ditutup.
+- **Profile Management:** Melihat informasi pengguna dan logout dengan aman.
 
-This project is a starting point for a Flutter application.
+## 🛠️ Tech Stack
+- **Framework:** Flutter (Dart)
+- **State Management:** Provider
+- **Networking:** Dio
+- **Local Storage:** SharedPreferences
+- **Backend:** Laravel (API)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Cara Menjalankan (Run)
+1. Pastikan Flutter SDK sudah terinstall.
+2. Clone repository ini.
+3. Install dependencies:
+   ```bash
+   flutter pub get
