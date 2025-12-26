@@ -92,6 +92,8 @@ Jika terdapat kendala dalam pengujian aplikasi, silakan hubungi:
    1. LINK GOOGLE DRIVE TUBES MOBILE
       https://drive.google.com/drive/folders/1TsxmR-L6qM-3czdAXrlfsr53wtypUXuy?usp=drive_link
 
+   2. LINK APLIKASI HEALTHTRACK
+      https://drive.google.com/file/d/1SOEP0zsmunIt5mMrrSSg_BFy3QP8hLNZ/view?usp=drive_link
    ---
    
 © 2025 HealthTrack Project - Tugas Besar Pemrograman Mobile.
