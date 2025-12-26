@@ -88,10 +88,8 @@ Jika terdapat kendala dalam pengujian aplikasi, silakan hubungi:
 ---
 
 ## LINK DRIVE HEALTHTRACK 
-   1. APLIKASI HEALTHTRACK
-      https://drive.google.com/file/d/1rWJBqumHHLPguB6BA2WtximDrlRZC-9N/view?usp=drive_link
 
-   2. LINK GOOGLE DRIVE TUBES MOBILE
+   1. LINK GOOGLE DRIVE TUBES MOBILE
       https://drive.google.com/drive/folders/1TsxmR-L6qM-3czdAXrlfsr53wtypUXuy?usp=drive_link
 
    ---
